@@ -1,0 +1,61 @@
+@startuml abstract-factory
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontSize 12
+left to right direction
+title Part B - Abstract Factory (package delivery.abstractfactory)
+
+interface GUIFactory <<Abstract Factory>> {
+  + createButton(): Button
+  + createCheckbox(): Checkbox
+}
+class WindowsFactory <<Concrete Factory 1>> {
+  + createButton(): Button
+  + createCheckbox(): Checkbox
+}
+class MacOSFactory <<Concrete Factory 2>> {
+  + createButton(): Button
+  + createCheckbox(): Checkbox
+}
+interface Button <<Abstract Product A>> {
+  + paint(): void
+}
+interface Checkbox <<Abstract Product B>> {
+  + paint(): void
+}
+class WindowsButton <<Windows family>> {
+  + paint(): void
+}
+class MacOSButton <<macOS family>> {
+  + paint(): void
+}
+class WindowsCheckbox <<Windows family>> {
+  + paint(): void
+}
+class MacOSCheckbox <<macOS family>> {
+  + paint(): void
+}
+class DeliveryApplication <<Client>> {
+  - button: Button
+  - checkbox: Checkbox
+  - logistics: Logistics
+  + DeliveryApplication(guiFactory: GUIFactory, logistics: Logistics)
+  + run(cargo: String, destination: String): void
+}
+
+WindowsFactory ..|> GUIFactory
+MacOSFactory ..|> GUIFactory
+WindowsButton ..|> Button
+MacOSButton ..|> Button
+WindowsCheckbox ..|> Checkbox
+MacOSCheckbox ..|> Checkbox
+WindowsFactory ..> WindowsButton : <<create>>
+WindowsFactory ..> WindowsCheckbox : <<create>>
+MacOSFactory ..> MacOSButton : <<create>>
+MacOSFactory ..> MacOSCheckbox : <<create>>
+GUIFactory ..> Button : returns
+GUIFactory ..> Checkbox : returns
+DeliveryApplication --> GUIFactory : constructor injection,\ncalls createButton()/createCheckbox()
+DeliveryApplication --> Button : paint()
+DeliveryApplication --> Checkbox : paint()
+@enduml
