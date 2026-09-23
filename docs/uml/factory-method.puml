@@ -1,0 +1,47 @@
+@startuml factory-method
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontSize 12
+skinparam linetype ortho
+title Part A - Factory Method (package delivery.factorymethod)
+
+interface Transport <<Product>> {
+  + deliver(cargo: String, destination: String): void
+}
+class Truck <<Concrete Product>> {
+  + deliver(cargo: String, destination: String): void
+}
+class Ship <<Concrete Product>> {
+  + deliver(cargo: String, destination: String): void
+}
+abstract class Logistics <<Creator>> {
+  # {abstract} createTransport(): Transport
+  + planDelivery(cargo: String, destination: String): void
+}
+class RoadLogistics <<Concrete Creator>> {
+  # createTransport(): Transport
+}
+class SeaLogistics <<Concrete Creator>> {
+  # createTransport(): Transport
+}
+class DeliveryApplication <<Client>> {
+  - logistics: Logistics
+  + DeliveryApplication(guiFactory: GUIFactory, logistics: Logistics)
+  + run(cargo: String, destination: String): void
+}
+
+Truck ..|> Transport
+Ship ..|> Transport
+RoadLogistics --|> Logistics
+SeaLogistics --|> Logistics
+Logistics ..> Transport : uses (calls deliver)
+RoadLogistics ..> Truck : <<create>>
+SeaLogistics ..> Ship : <<create>>
+DeliveryApplication --> Logistics : depends on\nplanDelivery(...)
+
+note right of Logistics
+  planDelivery():
+  1. t = createTransport()   // factory method
+  2. t.deliver(cargo, destination)
+end note
+@enduml
